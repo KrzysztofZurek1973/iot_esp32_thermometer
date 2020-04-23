@@ -40,6 +40,7 @@
 #include "thing_thermometer.h"
 
 #define ESP_INTR_FLAG_DEFAULT 0
+#define TCP_PORT 8080
 
 static char *THING_ID = "Thermometer";
 
@@ -245,9 +246,9 @@ void wifi_init_sta(char *ssid, char *pass){
     if (err == ESP_OK){
     	ESP_LOGI(TAG_WIFI, "wifi_init_sta finished.");
     	//turn off power savings
-    	esp_wifi_set_ps(WIFI_PS_NONE);
-    	//power savings causes disconnections
-    	//esp_wifi_set_ps(WIFI_PS_MIN_MODEM);
+    	//esp_wifi_set_ps(WIFI_PS_NONE);
+    	//turn ON power savings
+    	esp_wifi_set_ps(WIFI_PS_MIN_MODEM);
     }
     else{
     	ESP_LOGI(TAG_WIFI, "connection to AP failed");
@@ -299,7 +300,7 @@ void init_nvs(void){
 				//initialize wifi
 				vTaskDelay(5 / portTICK_PERIOD_MS);
 				wifi_init_sta(wifi_ssid, wifi_pass);
-				initialise_mdns(mdns_hostname, false);
+				initialize_mdns(NULL, true, TCP_PORT);
 				node_is_station = true;
 			}
 			else{
@@ -312,7 +313,7 @@ void init_nvs(void){
 			//start AP and server with page for defining these parameters
 			wifi_init_softap();
 			//initialize mDNS service
-			initialise_mdns(NULL, true);
+			initialize_mdns(NULL, true, TCP_PORT);
 			node_is_station = false;
 			//start server
 			xTaskCreate(ap_server_task, "ap_server_task", 1024*4, NULL, 1, NULL);
