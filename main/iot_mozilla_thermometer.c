@@ -198,7 +198,7 @@ static void event_handler(void* arg, esp_event_base_t event_base,
 	    	xEventGroupSetBits(wifi_event_group, IP4_CONNECTED_BIT);
 	    	if (thing_server_loaded == false){
 	    		//initialize web thing server
-	    		start_web_thing_server(8080, mdns_hostname, MDNS_DOMAIN);
+	    		start_web_thing_server(TCP_PORT, mdns_hostname, MDNS_DOMAIN);
 	    		thing_server_loaded = true;
 	    		//initialize sntp client
 	    		init_sntp();
@@ -300,7 +300,7 @@ void init_nvs(void){
 				//initialize wifi
 				vTaskDelay(5 / portTICK_PERIOD_MS);
 				wifi_init_sta(wifi_ssid, wifi_pass);
-				initialize_mdns(NULL, true, TCP_PORT);
+				initialize_mdns(mdns_hostname, false, TCP_PORT);
 				node_is_station = true;
 			}
 			else{
